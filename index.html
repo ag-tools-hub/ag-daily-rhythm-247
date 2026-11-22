@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Daily Rhythm — Morning Routine & Family Meals</title>
+
+  <!-- PWA & iOS Home Screen Meta Tags (Chrome & Safari "Add to Home Screen") -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Daily Rhythm" />
+  <meta name="theme-color" content="#FDFCF8" />
+
+  <!-- Custom Sunlit Sage & Apricot App Icon -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='42' fill='%233D7A5E'/%3E%3Ccircle cx='90' cy='72' r='34' fill='%23F4A261'/%3E%3Cpath d='M25 130 Q90 88 155 130 L155 180 L25 180 Z' fill='%23FDFCF8'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233D7A5E'/%3E%3Ccircle cx='32' cy='26' r='12' fill='%23F4A261'/%3E%3Cpath d='M8 46 Q32 32 56 46 L56 64 L8 64 Z' fill='%23FDFCF8'/%3E%3C/svg%3E" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Fraunces -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            display: ['"Fraunces"', 'Georgia', 'serif'],
+          },
+          colors: {
+            alabaster: '#FDFCF8',
+            card: '#FFFFFF',
+            borderWarm: '#EAE6DC',
+            ink: '#1E2923',
+            muted: '#64726A',
+            sage: '#3D7A5E',
+            sageDark: '#2E6049',
+            mint: '#EBF4EF',
+            apricot: '#F4A261',
+            apricotSoft: '#FEF3E8',
+            apricotDark: '#D97B34',
+          },
+          boxShadow: {
+            card: '0 4px 20px -4px rgba(30, 41, 35, 0.06)',
+            float: '0 -6px 24px -4px rgba(30, 41, 35, 0.08)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html, body {
+      background-color: #FDFCF8;
+      color: #1E2923;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .pb-safe {
+      padding-bottom: max(5.5rem, calc(4.75rem + env(safe-area-inset-bottom)));
+    }
+    .nav-safe {
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0.4; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-sheet {
+      animation: slideUp 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes popTap {
+      0% { transform: scale(0.94); }
+      60% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+    .animate-tap {
+      animation: popTap 0.18s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-alabaster text-ink selection:bg-mint selection:text-sage">
+
+  <!-- Toast Banner -->
+  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm pointer-events-none transition-all duration-300 opacity-0 -translate-y-4">
+    <div class="bg-ink text-alabaster px-4 py-2.5 rounded-2xl shadow-lg flex items-center justify-between gap-2 text-xs font-semibold">
+      <span id="toast-message">Saved!</span>
+      <span class="px-2 py-0.5 rounded-full bg-sage text-white text-[10px]">Done</span>
+    </div>
+  </div>
+
+  <!-- Slide-Up Bottom Sheet Modal (For Editing Workouts, Meals, or Confirmations) -->
+  <div id="bottom-sheet-backdrop" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-ink/40 backdrop-blur-xs" onclick="closeBottomSheet(event)">
+    <div id="bottom-sheet-panel" onclick="event.stopPropagation()" class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-borderWarm animate-sheet max-h-[88vh] overflow-y-auto">
+      <div class="w-10 h-1 rounded-full bg-borderWarm mx-auto mb-3 sm:hidden"></div>
+      <div id="bottom-sheet-content"></div>
+    </div>
+  </div>
+
+  <!-- Main App Shell -->
+  <div class="max-w-2xl mx-auto min-h-screen flex flex-col">
+
+    <!-- Compact Sunlit Header -->
+    <header class="sticky top-0 z-30 bg-alabaster/95 backdrop-blur-md border-b border-borderWarm/80 px-4 pt-3.5 pb-2.5">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-sage">5:20 AM Rhythm</span>
+          <h1 class="font-display text-xl sm:text-2xl font-bold text-ink leading-tight">Good Morning, Akshaya</h1>
+        </div>
+
+        <!-- Circular Progress Ring + Desktop Nav -->
+        <div class="flex items-center gap-3">
+          <!-- Desktop Tabs (Hidden on Mobile) -->
+          <nav class="hidden md:flex items-center gap-1.5 bg-white p-1 rounded-2xl border border-borderWarm">
+            <button onclick="switchTab('today')" data-tab="today" class="desk-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition">Today</button>
+            <button onclick="switchTab('meals')" data-tab="meals" class="desk-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition">Meals</button>
+            <button onclick="switchTab('prep')" data-tab="prep" class="desk-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition">Prep & Sync</button>
+          </nav>
+
+          <!-- Circular Progress Ring -->
+          <div id="progress-ring-box" class="relative w-11 h-11 flex items-center justify-center shrink-0" title="Daily Progress">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Day Selector Pills (Mon - Sun) -->
+      <div id="day-pills-bar" class="mt-2.5 flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
+        <!-- Rendered dynamically -->
+      </div>
+    </header>
+
+    <!-- Dynamic Main Screen -->
+    <main id="main-view" class="flex-1 px-4 pt-3.5 pb-safe space-y-3.5">
+      <!-- Rendered dynamically -->
+    </main>
+
+    <!-- Streamlined 3-Tab Thumb-Friendly Bottom Bar (Mobile) -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-borderWarm shadow-float nav-safe px-4 pt-1.5">
+      <div class="max-w-md mx-auto grid grid-cols-3 gap-2">
+        <button onclick="switchTab('today')" data-tab="today" class="mob-tab flex flex-col items-center justify-center py-1.5 rounded-2xl transition">
+          <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+          </svg>
+          <span class="text-[11px] font-bold">Today</span>
+        </button>
+
+        <button onclick="switchTab('meals')" data-tab="meals" class="mob-tab flex flex-col items-center justify-center py-1.5 rounded-2xl transition">
+          <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
+          <span class="text-[11px] font-bold">Meals</span>
+        </button>
+
+        <button onclick="switchTab('prep')" data-tab="prep" class="mob-tab flex flex-col items-center justify-center py-1.5 rounded-2xl transition">
+          <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <span class="text-[11px] font-bold">Prep & Sync</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    /*************************************************************************
+     * 1. STATE & CONCISE PRE-POPULATED DATA
+     *************************************************************************/
+    const STORAGE_KEY = 'daily_rhythm_v2_bright';
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const SHORT_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    function getTodayName() {
+      const idx = new Date().getDay();
+      return idx === 0 ? 'Sunday' : DAYS[idx - 1];
+    }
+
+    // Concise, scannable daily timeline items (3-6 word labels)
+    const TIMELINE_ITEMS = [
+      { id: 't1', time: '5:20 AM', label: 'Wake up & freshen up', icon: '🌅' },
+      { id: 't2', time: '5:45 AM', label: '15m Tai Chi, Qigong & Strength', icon: '🧘‍♀️' },
+      { id: 't3', time: '6:10 AM', label: 'Ariya breakfast & lunchbox', icon: '🍱' },
+      { id: 't4', time: '6:50 AM', label: 'Get Ariya ready for school', icon: '🎒' },
+      { id: 't5', time: '7:40 AM', label: 'Walk + Sattu & Iron', icon: '🍋', tip: 'Add lemon; wait 45m before tea' },
+      { id: 't6', time: '8:05 AM', label: 'Family tea & breakfast', icon: '🫖' },
+      { id: 't7', time: '8:40 AM', label: 'Shower, eat & drive to office', icon: '🚗' },
+      { id: 't8', time: '5:30 PM', label: 'Light dinner before commute', icon: '🥗' },
+      { id: 't9', time: '7:30 PM', label: 'Ariya homework, dinner & bed', icon: '📚' },
+      { id: 't10', time: '9:30 PM', label: 'Next-day prep & Tai Chi', icon: '✨' },
+      { id: 't11', time: '10:00 PM', label: 'Skincare & lights out (6h+ sleep)', icon: '🌙' }
+    ];
+
+    // Default 5:45 AM Workouts per day
+    const DEFAULT_WORKOUTS = {
+      Monday: { title: 'Morning Strength & Mobility', focus: 'Strength • 15m', youtubeUrl: '' },
+      Tuesday: { title: 'Energizing Tai Chi Flow', focus: 'Tai Chi • 15m', youtubeUrl: '' },
+      Wednesday: { title: 'Qigong & Core Stamina', focus: 'Qigong • 15m', youtubeUrl: '' },
+      Thursday: { title: 'Full-Body Light Strength', focus: 'Strength • 15m', youtubeUrl: '' },
+      Friday: { title: 'Tai Chi Spine & Hip Release', focus: 'Tai Chi • 15m', youtubeUrl: '' },
+      Saturday: { title: 'Vitality Qigong Breathwork', focus: 'Qigong • 15m', youtubeUrl: '' },
+      Sunday: { title: 'Gentle Tai Chi & Stretch', focus: 'Recovery • 15m', youtubeUrl: '' }
+    };
+
+    // Concise, exact Weekly Household Meal Plan (4 visual cards per day)
+    const DEFAULT_MEALS = {
+      Monday: {
+        tag: 'School Day',
+        ariyaBox: 'Paneer & corn rice • Cut cucumbers • 1 orange',
+        breakfast: 'Ariya: Ragi chocos + 1 boiled egg\nFamily & You: Sweet potato paratha + 2 boiled eggs each',
+        lunch: 'Family: Lunch at home (Mom)\nYou & Husband: Office lunch',
+        dinner: 'Ariya: Dosa with honey\nYou (5:30 PM): Early light dinner'
+      },
+      Tuesday: {
+        tag: "Ariya's Holiday",
+        ariyaBox: 'Holiday at home — no school box needed',
+        breakfast: 'All: Pesarattu & coconut chutney\nEggs: 2 boiled eggs/adult • 1 for Ariya',
+        lunch: 'All: Holiday family lunch at home',
+        dinner: 'Ariya: Garlic bread\nYou (5:30 PM): Early light dinner'
+      },
+      Wednesday: {
+        tag: 'School Day',
+        ariyaBox: 'Mushroom pasta in white sauce • Nuts • Pomegranate',
+        breakfast: 'Eggs: 2 boiled eggs/adult • 1 for Ariya + family breakfast',
+        lunch: 'Ariya & Family: Mushroom pasta, nuts & pomegranate\nYou: Office lunch',
+        dinner: 'All: Dosa with tomato chutney'
+      },
+      Thursday: {
+        tag: 'School Day',
+        ariyaBox: 'Choco-chip pancakes (with sattu) • Nuts • Cut apples',
+        breakfast: 'Ariya: Chocos + 1 boiled egg\nFamily & You: Neer dosa & potato stew + 2 boiled eggs each',
+        lunch: 'You & Husband: Office lunch\nFamily: Lunch at home',
+        dinner: 'Ariya: Idli\nYou (5:30 PM): Early light dinner'
+      },
+      Friday: {
+        tag: 'School Day',
+        ariyaBox: 'Paneer bhurji sandwich • Cut oranges • Nuts',
+        breakfast: 'Eggs: 2 boiled eggs/adult • 1 for Ariya + family breakfast',
+        lunch: 'Ariya & Family: Paneer bhurji sandwich, oranges & nuts\nYou: Office lunch',
+        dinner: 'All: Dosa and honey'
+      },
+      Saturday: {
+        tag: 'Weekend',
+        ariyaBox: 'Evening Snack: Soya & potato cutlets',
+        breakfast: 'All: Pongal and sambar + boiled eggs (2 adults / 1 Ariya)',
+        lunch: 'All: Sambar, carrot-beans poriyal & mor kozhumbu',
+        dinner: 'All: Dosa and tomato-onion chutney'
+      },
+      Sunday: {
+        tag: 'Weekend',
+        ariyaBox: 'Sunday Treat: Soya 65 alongside lunch',
+        breakfast: 'All: Egg bhurji sandwich + boiled eggs (2 adults / 1 Ariya)',
+        lunch: 'All: Paneer tikka, herbed rice with coconut milk & Soya 65',
+        dinner: 'All: Idly and coconut chutney'
+      }
+    };
+
+    const NIGHT_PREP_ITEMS = [
+      { id: 'p1', label: 'Boil batch of eggs (2/adult, 1 Ariya)', tag: 'Protein' },
+      { id: 'p2', label: 'Refill Sattu premix (Sattu + flax + jeera + black salt)', tag: '7:40 AM' },
+      { id: 'p3', label: 'Chop veggies / prep paneer for morning box', tag: 'Kitchen' },
+      { id: 'p4', label: 'Lay out 5:45 AM workout clothes & mat', tag: 'Morning' }
+    ];
+
+    function emptyDayLog() {
+      return {
+        eggs: 0,
+        tea: 0,
+        walks: 0,
+        smoothie: false,
+        paneer: false,
+        flexDay: false,
+        tasks: {},
+        prep: {}
+      };
+    }
+
+    function createDefaultState() {
+      const logs = {};
+      DAYS.forEach(d => { logs[d] = emptyDayLog(); });
+      return {
+        activeTab: 'today',
+        selectedDay: getTodayName(),
+        workouts: JSON.parse(JSON.stringify(DEFAULT_WORKOUTS)),
+        meals: JSON.parse(JSON.stringify(DEFAULT_MEALS)),
+        logs
+      };
+    }
+
+    let state = (function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return createDefaultState();
+        const parsed = JSON.parse(raw);
+        const def = createDefaultState();
+        return {
+          ...def,
+          ...parsed,
+          selectedDay: DAYS.includes(parsed.selectedDay) ? parsed.selectedDay : getTodayName(),
+          workouts: { ...def.workouts, ...(parsed.workouts || {}) },
+          meals: { ...def.meals, ...(parsed.meals || {}) },
+          logs: DAYS.reduce((acc, d) => {
+            acc[d] = { ...emptyDayLog(), ...(parsed.logs?.[d] || {}) };
+            return acc;
+          }, {})
+        };
+      } catch (e) {
+        return createDefaultState();
+      }
+    })();
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    /*************************************************************************
+     * 2. BESPOKE WARM FLAT-VECTOR SVG ILLUSTRATIONS
+     *************************************************************************/
+    const SVG_ART = {
+      // Sunlit Morning Tai Chi & Qigong Hero Illustration
+      morningHero: `
+        <svg viewBox="0 0 140 110" class="w-28 h-24 sm:w-32 sm:h-28 shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="96" cy="36" r="24" fill="#F4A261" fill-opacity="0.28"/>
+          <circle cx="96" cy="36" r="15" fill="#F4A261"/>
+          <path d="M12 96C34 74 62 72 86 84C104 93 120 90 132 82V104H12V96Z" fill="#3D7A5E" fill-opacity="0.18"/>
+          <path d="M8 102C36 86 72 86 134 100V108H8V102Z" fill="#3D7A5E" fill-opacity="0.32"/>
+          <!-- Graceful Flowing Silhouette -->
+          <circle cx="56" cy="34" r="7.5" fill="#2E6049"/>
+          <path d="M32 52C42 46 50 45 57 46C65 47 74 42 83 36" stroke="#2E6049" stroke-width="5" stroke-linecap="round"/>
+          <path d="M56 46L54 68L42 90" stroke="#3D7A5E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M55 66L70 78L68 92" stroke="#3D7A5E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="28" cy="30" r="3" fill="#F4A261"/>
+          <circle cx="122" cy="54" r="2.5" fill="#3D7A5E" fill-opacity="0.5"/>
+        </svg>
+      `,
+      // Bento Box Icon
+      bento: `
+        <svg viewBox="0 0 44 44" class="w-10 h-10 shrink-0" fill="none">
+          <rect width="44" height="44" rx="14" fill="#FEF3E8"/>
+          <rect x="10" y="13" width="24" height="18" rx="5" fill="#F4A261"/>
+          <line x1="22" y1="13" x2="22" y2="31" stroke="#FDFCF8" stroke-width="2"/>
+          <line x1="22" y1="22" x2="34" y2="22" stroke="#FDFCF8" stroke-width="2"/>
+          <circle cx="16" cy="22" r="3" fill="#FDFCF8"/>
+        </svg>
+      `,
+      // Sunny Breakfast Plate Icon
+      breakfast: `
+        <svg viewBox="0 0 44 44" class="w-10 h-10 shrink-0" fill="none">
+          <rect width="44" height="44" rx="14" fill="#EBF4EF"/>
+          <circle cx="22" cy="23" r="11" fill="#FFFFFF" stroke="#3D7A5E" stroke-width="2"/>
+          <circle cx="20" cy="22" r="4" fill="#F4A261"/>
+          <path d="M26 19C28 21 28 25 26 27" stroke="#3D7A5E" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      `,
+      // Wholesome Lunch Bowl Icon
+      lunch: `
+        <svg viewBox="0 0 44 44" class="w-10 h-10 shrink-0" fill="none">
+          <rect width="44" height="44" rx="14" fill="#EBF4EF"/>
+          <path d="M11 21H33C33 27.6274 27.6274 33 21 33H23C16.3726 33 11 27.6274 11 21Z" fill="#3D7A5E"/>
+          <circle cx="18" cy="18" r="3" fill="#F4A261"/>
+          <circle cx="25" cy="17" r="3.5" fill="#84B59F"/>
+        </svg>
+      `,
+      // Cozy Dinner Plate Icon
+      dinner: `
+        <svg viewBox="0 0 44 44" class="w-10 h-10 shrink-0" fill="none">
+          <rect width="44" height="44" rx="14" fill="#FEF3E8"/>
+          <circle cx="22" cy="23" r="11" fill="#FFFFFF" stroke="#D97B34" stroke-width="2"/>
+          <path d="M16 24C18 19 26 19 28 24" fill="#F4A261"/>
+          <circle cx="29" cy="14" r="2" fill="#D97B34"/>
+        </svg>
+      `,
+      // Night Prep Moon & Checklist Illustration
+      nightPrep: `
+        <svg viewBox="0 0 90 76" class="w-20 h-16 shrink-0" fill="none">
+          <circle cx="48" cy="38" r="28" fill="#EBF4EF"/>
+          <path d="M52 20C44 22 39 29 39 38C39 47 45 54 54 56C43 58 32 50 32 38C32 26 42 18 52 20Z" fill="#3D7A5E"/>
+          <circle cx="62" cy="26" r="3.5" fill="#F4A261"/>
+          <circle cx="66" cy="42" r="2" fill="#F4A261"/>
+        </svg>
+      `
+    };
+
+    /*************************************************************************
+     * 3. TOAST & SLIDE-UP BOTTOM SHEET HELPERS
+     *************************************************************************/
+    let toastTimeout = null;
+    function showToast(msg) {
+      const box = document.getElementById('toast-container');
+      document.getElementById('toast-message').textContent = msg;
+      box.classList.remove('opacity-0', '-translate-y-4');
+      box.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        box.classList.add('opacity-0', '-translate-y-4');
+        box.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    function openBottomSheet(htmlContent) {
+      const backdrop = document.getElementById('bottom-sheet-backdrop');
+      document.getElementById('bottom-sheet-content').innerHTML = htmlContent;
+      backdrop.classList.remove('hidden');
+      backdrop.classList.add('flex');
+    }
+
+    function closeBottomSheet(e) {
+      if (e && e.target !== document.getElementById('bottom-sheet-backdrop')) return;
+      const backdrop = document.getElementById('bottom-sheet-backdrop');
+      backdrop.classList.add('hidden');
+      backdrop.classList.remove('flex');
+    }
+
+    function forceCloseSheet() {
+      const backdrop = document.getElementById('bottom-sheet-backdrop');
+      backdrop.classList.add('hidden');
+      backdrop.classList.remove('flex');
+    }
+
+    function esc(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function lines(str) {
+      return esc(str).replace(/\n/g, '<br/>');
+    }
+
+    /*************************************************************************
+     * 4. NAVIGATION & HEADER PROGRESS RING
+     *************************************************************************/
+    function switchTab(tab) {
+      state.activeTab = tab;
+      saveState();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function selectDay(day) {
+      state.selectedDay = day;
+      saveState();
+      render();
+    }
+
+    function renderHeader() {
+      const day = state.selectedDay;
+      const log = state.logs[day];
+      const todayName = getTodayName();
+
+      // Calculate daily completion (11 timeline tasks + 5 anchor goals = 16)
+      const tasksDone = TIMELINE_ITEMS.filter(t => log.tasks[t.id]).length;
+      const anchorsDone =
+        (log.eggs >= 3 ? 1 : 0) +
+        (log.tea >= 1 && log.tea <= (log.flexDay ? 3 : 2) ? 1 : 0) +
+        (log.walks >= 2 ? 1 : 0) +
+        (log.smoothie ? 1 : 0) +
+        (log.paneer ? 1 : 0);
+
+      const total = TIMELINE_ITEMS.length + 5;
+      const done = tasksDone + anchorsDone;
+      const pct = Math.round((done / total) * 100);
+      const radius = 17;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (pct / 100) * circumference;
+
+      document.getElementById('progress-ring-box').innerHTML = `
+        <svg class="w-11 h-11 -rotate-90" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="${radius}" stroke="#EAE6DC" stroke-width="3.5" fill="none" />
+          <circle cx="21" cy="21" r="${radius}" stroke="#3D7A5E" stroke-width="3.5" fill="none"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
+            class="transition-all duration-300" />
+        </svg>
+        <span class="absolute text-[10px] font-extrabold text-ink">${pct}%</span>
+      `;
+
+      // Highlight active mobile & desktop tabs
+      document.querySelectorAll('.mob-tab').forEach(btn => {
+        const active = btn.dataset.tab === state.activeTab;
+        btn.className = active
+          ? 'mob-tab flex flex-col items-center justify-center py-1.5 rounded-2xl transition bg-mint text-sage'
+          : 'mob-tab flex flex-col items-center justify-center py-1.5 rounded-2xl transition text-muted hover:text-ink';
+      });
+
+      document.querySelectorAll('.desk-tab').forEach(btn => {
+        const active = btn.dataset.tab === state.activeTab;
+        btn.className = active
+          ? 'desk-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-sage text-white shadow-xs'
+          : 'desk-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition text-muted hover:text-ink';
+      });
+
+      // Render Day Pills (Shown on Today & Meals, hidden on Prep & Sync)
+      const pillsBar = document.getElementById('day-pills-bar');
+      if (state.activeTab === 'prep') {
+        pillsBar.classList.add('hidden');
+      } else {
+        pillsBar.classList.remove('hidden');
+        pillsBar.innerHTML = DAYS.map((d, i) => {
+          const isSel = d === day;
+          const isToday = d === todayName;
+          return `
+            <button onclick="selectDay('${d}')"
+              class="flex-1 min-w-[44px] py-1.5 px-2 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center border ${
+                isSel
+                  ? 'bg-sage text-white border-sage shadow-xs'
+                  : 'bg-white text-muted border-borderWarm hover:border-sage/40'
+              }">
+              <span>${SHORT_DAYS[i]}</span>
+              <span class="w-1 h-1 rounded-full mt-0.5 ${isToday ? (isSel ? 'bg-apricot' : 'bg-apricotDark') : 'bg-transparent'}"></span>
+            </button>
+          `;
+        }).join('');
+      }
+    }
+
+    /*************************************************************************
+     * 5. TAB 1: TODAY (5:45 WORKOUT HERO, QUICK-TAP PILLS & TIMELINE)
+     *************************************************************************/
+    function tapEggs(count) {
+      const log = state.logs[state.selectedDay];
+      log.eggs = (log.eggs === count) ? count - 1 : count;
+      saveState();
+      render();
+    }
+
+    function tapTea(count) {
+      const log = state.logs[state.selectedDay];
+      log.tea = (log.tea === count) ? count - 1 : count;
+      saveState();
+      render();
+    }
+
+    function tapWalks(count) {
+      const log = state.logs[state.selectedDay];
+      log.walks = (log.walks === count) ? count - 1 : count;
+      saveState();
+      render();
+    }
+
+    function toggleQuickChip(field) {
+      const log = state.logs[state.selectedDay];
+      log[field] = !log[field];
+      saveState();
+      render();
+      if (field === 'flexDay') {
+        showToast(log.flexDay ? 'Low-Day Flex ON: 1 bonus coffee or small treat!' : 'Standard sugar limit active');
+      }
+    }
+
+    function toggleTask(taskId) {
+      const log = state.logs[state.selectedDay];
+      log.tasks[taskId] = !log.tasks[taskId];
+      saveState();
+      render();
+    }
+
+    function openWorkoutEditor() {
+      const day = state.selectedDay;
+      const w = state.workouts[day];
+      openBottomSheet(`
+        <div class="space-y-3.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase text-sage">${day} • 5:45 AM Slot</span>
+              <h3 class="font-display text-lg font-bold text-ink">Edit Morning Workout</h3>
+            </div>
+            <button onclick="forceCloseSheet()" class="w-8 h-8 rounded-full bg-alabaster text-muted font-bold">✕</button>
+          </div>
+
+          <div class="space-y-2.5">
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-muted mb-1">Routine Name</label>
+              <input id="sheet-w-title" type="text" value="${esc(w.title)}" class="w-full px-3.5 py-2.5 rounded-2xl bg-alabaster border border-borderWarm text-sm font-semibold text-ink" />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-muted mb-1">Focus Tag</label>
+              <select id="sheet-w-focus" class="w-full px-3.5 py-2.5 rounded-2xl bg-alabaster border border-borderWarm text-sm font-semibold text-ink">
+                ${['Tai Chi • 15m', 'Qigong • 15m', 'Strength • 15m', 'Tai Chi + Core • 15m', 'Recovery • 15m'].map(opt =>
+                  `<option value="${opt}" ${w.focus === opt ? 'selected' : ''}>${opt}</option>`
+                ).join('')}
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-muted mb-1">YouTube Video Link</label>
+              <input id="sheet-w-url" type="url" value="${esc(w.youtubeUrl)}" placeholder="Paste YouTube URL here..." class="w-full px-3.5 py-2.5 rounded-2xl bg-alabaster border border-borderWarm text-sm text-ink" />
+            </div>
+          </div>
+
+          <button onclick="saveWorkoutFromSheet()" class="w-full py-3 rounded-2xl bg-sage text-white font-bold text-sm hover:bg-sageDark transition">
+            Save ${day}'s Workout
+          </button>
+        </div>
+      `);
+    }
+
+    function saveWorkoutFromSheet() {
+      const day = state.selectedDay;
+      const title = document.getElementById('sheet-w-title').value.trim();
+      const focus = document.getElementById('sheet-w-focus').value;
+      const youtubeUrl = document.getElementById('sheet-w-url').value.trim();
+      if (!title) return;
+      state.workouts[day] = { title, focus, youtubeUrl };
+      saveState();
+      forceCloseSheet();
+      render();
+      showToast(`${day} workout updated!`);
+    }
+
+    function renderToday() {
+      const day = state.selectedDay;
+      const log = state.logs[day];
+      const w = state.workouts[day];
+      const maxTea = log.flexDay ? 3 : 2;
+      const launchUrl = w.youtubeUrl
+        ? w.youtubeUrl
+        : `https://www.youtube.com/results?search_query=${encodeURIComponent(w.title)}`;
+
+      document.getElementById('main-view').innerHTML = `
+        <!-- 1. 5:45 AM WORKOUT HERO CARD (Zero Scrolling Needed) -->
+        <section class="relative overflow-hidden bg-gradient-to-br from-mint via-white to-apricotSoft border border-borderWarm rounded-3xl p-4 shadow-card">
+          <div class="flex items-center justify-between gap-2">
+            <div class="space-y-1.5 min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="px-2.5 py-0.5 rounded-full bg-white/90 border border-borderWarm text-[11px] font-bold text-sage">
+                  5:45 AM • ${esc(w.focus)}
+                </span>
+                <button onclick="openWorkoutEditor()" aria-label="Edit Workout"
+                  class="w-7 h-7 rounded-full bg-white/90 border border-borderWarm text-muted hover:text-ink flex items-center justify-center transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              </div>
+
+              <h2 class="font-display text-lg sm:text-xl font-bold text-ink leading-snug">
+                ${esc(w.title)}
+              </h2>
+
+              <div class="pt-1 flex items-center gap-2">
+                <a href="${esc(launchUrl)}" target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-sage text-white text-xs font-bold shadow-xs hover:bg-sageDark active:scale-95 transition">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <span>Start Workout</span>
+                </a>
+                <button onclick="toggleTask('t2')"
+                  class="px-3 py-2.5 rounded-2xl text-xs font-bold border transition ${
+                    log.tasks['t2'] ? 'bg-sage/15 border-sage text-sage' : 'bg-white/80 border-borderWarm text-muted'
+                  }">
+                  ${log.tasks['t2'] ? '✓ Done' : 'Mark'}
+                </button>
+              </div>
+            </div>
+
+            <!-- Sunlit Tai Chi Vector Illustration -->
+            ${SVG_ART.morningHero}
+          </div>
+        </section>
+
+        <!-- 2. QUICK-TAP DAILY ANCHORS (Interactive Visual Pills) -->
+        <section class="bg-white border border-borderWarm rounded-3xl p-3.5 shadow-card space-y-2.5">
+          <div class="flex items-center justify-between px-0.5">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-muted">Daily Fuel & Habits</span>
+            <button onclick="toggleQuickChip('flexDay')"
+              class="px-2.5 py-1 rounded-full text-[11px] font-bold border transition flex items-center gap-1 ${
+                log.flexDay
+                  ? 'bg-apricotSoft border-apricot text-apricotDark'
+                  : 'bg-alabaster border-borderWarm text-muted hover:border-apricot/60'
+              }">
+              <span>✨</span>
+              <span>${log.flexDay ? 'Low-Day Flex ON' : 'Low-Day Flex'}</span>
+            </button>
+          </div>
+
+          <!-- Interactive Tap-to-Fill Icons Row -->
+          <div class="grid grid-cols-3 gap-2">
+            <!-- Eggs: 0/3 -->
+            <div class="p-2.5 rounded-2xl bg-alabaster border border-borderWarm flex flex-col items-center justify-center">
+              <span class="text-[11px] font-bold text-muted mb-1.5">Eggs (${log.eggs}/3)</span>
+              <div class="flex items-center gap-1">
+                ${[1, 2, 3].map(n => `
+                  <button onclick="tapEggs(${n})" class="text-lg transition transform active:scale-90 ${log.eggs >= n ? 'opacity-100 scale-105' : 'opacity-25 grayscale'}">
+                    🥚
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Tea/Coffee: 0/2 (or 3 on Flex Day) -->
+            <div class="p-2.5 rounded-2xl bg-alabaster border border-borderWarm flex flex-col items-center justify-center">
+              <span class="text-[11px] font-bold text-muted mb-1.5">Tea (${log.tea}/${maxTea})</span>
+              <div class="flex items-center gap-1">
+                ${Array.from({ length: maxTea }, (_, idx) => idx + 1).map(n => `
+                  <button onclick="tapTea(${n})" class="text-lg transition transform active:scale-90 ${log.tea >= n ? 'opacity-100 scale-105' : 'opacity-25 grayscale'}">
+                    ☕
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Office Walks: 0/2 -->
+            <div class="p-2.5 rounded-2xl bg-alabaster border border-borderWarm flex flex-col items-center justify-center">
+              <span class="text-[11px] font-bold text-muted mb-1.5">Walks (${log.walks}/2)</span>
+              <div class="flex items-center gap-1.5">
+                ${[1, 2].map(n => `
+                  <button onclick="tapWalks(${n})" class="text-lg transition transform active:scale-90 ${log.walks >= n ? 'opacity-100 scale-105' : 'opacity-25 grayscale'}">
+                    👟
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- 1-Tap Protein Chips -->
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="toggleQuickChip('smoothie')"
+              class="py-2 px-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                log.smoothie ? 'bg-mint border-sage text-sage' : 'bg-alabaster border-borderWarm text-muted'
+              }">
+              <span>🥤</span>
+              <span>4 PM Smoothie</span>
+              ${log.smoothie ? '<span>✓</span>' : ''}
+            </button>
+
+            <button onclick="toggleQuickChip('paneer')"
+              class="py-2 px-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                log.paneer ? 'bg-mint border-sage text-sage' : 'bg-alabaster border-borderWarm text-muted'
+              }">
+              <span>🧀</span>
+              <span>Paneer Portion</span>
+              ${log.paneer ? '<span>✓</span>' : ''}
+            </button>
+          </div>
+        </section>
+
+        <!-- 3. ULTRA-SCANNABLE SINGLE-LINE TIMELINE -->
+        <section class="bg-white border border-borderWarm rounded-3xl p-3.5 shadow-card space-y-2">
+          <div class="flex items-center justify-between px-1 pb-0.5">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-muted">${day} Flow</span>
+            <span class="text-[11px] font-semibold text-sage">≤ 24g Sugar • 6h+ Sleep</span>
+          </div>
+
+          <div class="divide-y divide-borderWarm/60">
+            ${TIMELINE_ITEMS.map(item => {
+              const checked = !!log.tasks[item.id];
+              return `
+                <div onclick="toggleTask('${item.id}')"
+                  class="py-2.5 px-1.5 flex items-center gap-3 cursor-pointer select-none active:bg-alabaster rounded-xl transition">
+                  <!-- Big Thumb Checkbox -->
+                  <div class="w-6 h-6 rounded-lg border-2 shrink-0 flex items-center justify-center transition ${
+                    checked ? 'bg-sage border-sage text-white' : 'bg-white border-borderWarm'
+                  }">
+                    ${checked ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                  </div>
+
+                  <!-- Time Pill -->
+                  <span class="text-[11px] font-extrabold text-sage bg-mint/70 px-2 py-0.5 rounded-lg shrink-0 w-[68px] text-center">
+                    ${item.time}
+                  </span>
+
+                  <!-- Short Label + Optional Info Tooltip -->
+                  <div class="flex-1 min-w-0 flex items-center gap-1.5">
+                    <span class="text-sm shrink-0">${item.icon}</span>
+                    <span class="text-xs sm:text-sm font-semibold truncate ${checked ? 'line-through text-muted' : 'text-ink'}">
+                      ${esc(item.label)}
+                    </span>
+                    ${item.tip ? `
+                      <button onclick="event.stopPropagation(); showToast('${esc(item.tip)}')" aria-label="Tip"
+                        class="w-4 h-4 rounded-full bg-apricotSoft text-apricotDark text-[10px] font-extrabold shrink-0 flex items-center justify-center border border-apricot/40">
+                        i
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /*************************************************************************
+     * 6. TAB 2: MEALS (ILLUSTRATED CARDS + BOTTOM-SHEET EDITOR)
+     *************************************************************************/
+    function openMealEditor(day, slotKey, slotTitle) {
+      const m = state.meals[day];
+      openBottomSheet(`
+        <div class="space-y-3.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase text-sage">${day}</span>
+              <h3 class="font-display text-lg font-bold text-ink">Edit ${slotTitle}</h3>
+            </div>
+            <button onclick="forceCloseSheet()" class="w-8 h-8 rounded-full bg-alabaster text-muted font-bold">✕</button>
+          </div>
+
+          <textarea id="sheet-meal-text" rows="4"
+            class="w-full p-3.5 rounded-2xl bg-alabaster border border-borderWarm text-sm text-ink leading-relaxed focus:outline-hidden focus:border-sage">${esc(m[slotKey])}</textarea>
+
+          <div class="flex gap-2">
+            <button onclick="resetSingleMeal('${day}', '${slotKey}')" class="px-4 py-3 rounded-2xl bg-alabaster border border-borderWarm text-xs font-bold text-muted hover:text-ink">
+              Reset Default
+            </button>
+            <button onclick="saveMealFromSheet('${day}', '${slotKey}')" class="flex-1 py-3 rounded-2xl bg-sage text-white text-sm font-bold hover:bg-sageDark">
+              Save Menu
+            </button>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveMealFromSheet(day, slotKey) {
+      const val = document.getElementById('sheet-meal-text').value.trim();
+      state.meals[day][slotKey] = val;
+      saveState();
+      forceCloseSheet();
+      render();
+      showToast(`${day} menu saved!`);
+    }
+
+    function resetSingleMeal(day, slotKey) {
+      state.meals[day][slotKey] = DEFAULT_MEALS[day][slotKey];
+      saveState();
+      forceCloseSheet();
+      render();
+      showToast('Restored original menu');
+    }
+
+    function renderMeals() {
+      const day = state.selectedDay;
+      const m = state.meals[day];
+
+      const cards = [
+        { key: 'ariyaBox', title: "Ariya's School Box", art: SVG_ART.bento, accent: 'border-apricot/40' },
+        { key: 'breakfast', title: 'Morning & Breakfast', art: SVG_ART.breakfast, accent: 'border-borderWarm' },
+        { key: 'lunch', title: 'Afternoon Lunch', art: SVG_ART.lunch, accent: 'border-borderWarm' },
+        { key: 'dinner', title: 'Evening & Dinner', art: SVG_ART.dinner, accent: 'border-borderWarm' }
+      ];
+
+      document.getElementById('main-view').innerHTML = `
+        <!-- Day Title & Boiled Egg Anchor Pill -->
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <h2 class="font-display text-xl font-bold text-ink">${day}</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-mint text-sage text-[11px] font-bold">${esc(m.tag)}</span>
+          </div>
+          <span class="text-[11px] font-bold text-apricotDark bg-apricotSoft px-2.5 py-1 rounded-full">
+            🥚 2/adult • 1 Ariya
+          </span>
+        </div>
+
+        <!-- 4 Illustrated Tap-to-Edit Meal Cards -->
+        <div class="space-y-3">
+          ${cards.map(c => `
+            <div onclick="openMealEditor('${day}', '${c.key}', '${c.title.replace(/'/g, "\\'")}')"
+              class="bg-white border ${c.accent} rounded-3xl p-3.5 shadow-card flex items-start gap-3 cursor-pointer hover:border-sage/50 active:scale-[0.99] transition">
+              ${c.art}
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <h3 class="text-xs font-extrabold uppercase tracking-wider text-sage">${c.title}</h3>
+                  <span class="text-[11px] font-semibold text-muted">Tap to edit</span>
+                </div>
+                <p class="text-xs sm:text-sm font-medium text-ink mt-1 leading-relaxed">
+                  ${lines(m[c.key])}
+                </p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    /*************************************************************************
+     * 7. TAB 3: PREP & SYNC (NIGHTLY CHECKLIST + 1-TAP TRANSFER)
+     *************************************************************************/
+    function toggleNightPrep(prepId) {
+      const log = state.logs[state.selectedDay];
+      log.prep[prepId] = !log.prep[prepId];
+      saveState();
+      render();
+    }
+
+    function copySyncCode() {
+      try {
+        const payload = JSON.stringify({ workouts: state.workouts, meals: state.meals, logs: state.logs });
+        const encoded = btoa(unescape(encodeURIComponent(payload)));
+        const box = document.getElementById('sync-box');
+        box.value = encoded;
+        box.select();
+        box.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        showToast('Sync code copied! Paste into WhatsApp/Notes.');
+      } catch (e) {
+        showToast('Could not copy sync code');
+      }
+    }
+
+    function loadSyncCode() {
+      const raw = document.getElementById('sync-box').value.trim();
+      if (!raw) {
+        showToast('Paste a sync code first');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(decodeURIComponent(escape(atob(raw))));
+        if (!parsed.meals || !parsed.workouts) throw new Error('Invalid');
+        state.workouts = parsed.workouts;
+        state.meals = parsed.meals;
+        if (parsed.logs) state.logs = parsed.logs;
+        saveState();
+        showToast('Synced from laptop!');
+        switchTab('today');
+      } catch (e) {
+        showToast('Invalid sync code');
+      }
+    }
+
+    function confirmFullReset() {
+      openBottomSheet(`
+        <div class="space-y-4">
+          <h3 class="font-display text-lg font-bold text-ink">Reset All App Data?</h3>
+          <p class="text-xs text-muted leading-relaxed">This restores your original weekly meals, workouts, and clears checkmarks.</p>
+          <div class="flex gap-2">
+            <button onclick="forceCloseSheet()" class="flex-1 py-2.5 rounded-2xl bg-alabaster text-xs font-bold text-muted">Cancel</button>
+            <button onclick="localStorage.removeItem('${STORAGE_KEY}'); state=createDefaultState(); saveState(); forceCloseSheet(); render(); showToast('Reset complete');"
+              class="flex-1 py-2.5 rounded-2xl bg-apricotDark text-white text-xs font-bold">Reset All</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function renderPrepAndSync() {
+      const log = state.logs[state.selectedDay];
+
+      document.getElementById('main-view').innerHTML = `
+        <!-- 1. Nightly 9:30 PM Prep Checklist -->
+        <section class="bg-white border border-borderWarm rounded-3xl p-4 shadow-card space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-sage">9:30 PM Wind-Down</span>
+              <h2 class="font-display text-lg font-bold text-ink">Nightly Prep Checklist</h2>
+            </div>
+            ${SVG_ART.nightPrep}
+          </div>
+
+          <div class="space-y-2">
+            ${NIGHT_PREP_ITEMS.map(item => {
+              const done = !!log.prep[item.id];
+              return `
+                <div onclick="toggleNightPrep('${item.id}')"
+                  class="p-3 rounded-2xl border flex items-center justify-between gap-3 cursor-pointer transition ${
+                    done ? 'bg-mint/70 border-sage/40' : 'bg-alabaster border-borderWarm'
+                  }">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center ${
+                      done ? 'bg-sage border-sage text-white' : 'bg-white border-borderWarm'
+                    }">
+                      ${done ? '<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    </div>
+                    <span class="text-xs font-semibold ${done ? 'line-through text-muted' : 'text-ink'}">${esc(item.label)}</span>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-sage border border-borderWarm shrink-0">${esc(item.tag)}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+
+        <!-- 2. Compact Visual Rules Reference -->
+        <section class="grid grid-cols-2 gap-2.5">
+          <div class="bg-white border border-borderWarm rounded-2xl p-3 shadow-card">
+            <span class="text-base">🥚</span>
+            <div class="text-xs font-extrabold text-ink mt-1">3 Eggs + Paneer</div>
+            <p class="text-[11px] text-muted mt-0.5">Plus 4 PM protein smoothie & 7:40 AM sattu</p>
+          </div>
+          <div class="bg-white border border-borderWarm rounded-2xl p-3 shadow-card">
+            <span class="text-base">🍵</span>
+            <div class="text-xs font-extrabold text-ink mt-1">≤ 24g Added Sugar</div>
+            <p class="text-[11px] text-muted mt-0.5">Max 2 cups tea/coffee w/ sugar (Flex day = +1)</p>
+          </div>
+        </section>
+
+        <!-- 3. Laptop <-> iPhone 1-Tap Sync -->
+        <section class="bg-white border border-borderWarm rounded-3xl p-4 shadow-card space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase text-sage">Laptop ↔ iPhone</span>
+              <h3 class="font-display text-base font-bold text-ink">Sync Weekly Edits</h3>
+            </div>
+            <button onclick="confirmFullReset()" class="text-[11px] font-bold text-apricotDark hover:underline">Reset App</button>
+          </div>
+
+          <textarea id="sync-box" rows="2" placeholder="Tap Copy Sync Code on laptop, paste here on iPhone..."
+            class="w-full p-2.5 rounded-2xl bg-alabaster border border-borderWarm text-[11px] font-mono text-ink focus:outline-hidden focus:border-sage"></textarea>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="copySyncCode()" class="py-2.5 rounded-2xl bg-sage text-white text-xs font-bold hover:bg-sageDark transition">
+              Copy Sync Code
+            </button>
+            <button onclick="loadSyncCode()" class="py-2.5 rounded-2xl bg-ink text-white text-xs font-bold hover:opacity-90 transition">
+              Paste & Load
+            </button>
+          </div>
+        </section>
+      `;
+    }
+
+    /*************************************************************************
+     * 8. MASTER RENDER
+     *************************************************************************/
+    function render() {
+      renderHeader();
+      if (state.activeTab === 'today') renderToday();
+      else if (state.activeTab === 'meals') renderMeals();
+      else renderPrepAndSync();
+    }
+
+    window.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>
